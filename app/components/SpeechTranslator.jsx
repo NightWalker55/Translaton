@@ -10,6 +10,7 @@ const SpeechTranslator = () => {
   const [speechLanguage, setSpeechLanguage] = useState("English (USA)");
   const [targetedLanguage, setTargetedLanguage] = useState("English (USA)");
 
+  
   useEffect(() => {
     // Trigger translation whenever targetedLanguage changes
     if (translatedText && targetedLanguage !== speechLanguage) {

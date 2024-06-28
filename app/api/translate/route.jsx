@@ -3,15 +3,19 @@ import { v2 as translateV2 } from '@google-cloud/translate';
 import path from 'path';
 import dotenv from 'dotenv';
 
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
-dotenv.config({ path: path.resolve(process.cwd(), 'key.env') });
+const keyFilePath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+const credentials = JSON.parse(keyFilePath);
 
-const keyFilePath = path.resolve(process.cwd(), './keys/service_key.json');
 
 
 const translate = new translateV2.Translate({
-  projectId: "translator-427811",
-  keyFilename: keyFilePath,
+    projectId: credentials.project_id,
+    credentials: {
+      client_email: credentials.client_email,
+      private_key: credentials.private_key,
+    },
 });
 
 export async function POST(request) {
