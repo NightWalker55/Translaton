@@ -20,12 +20,13 @@ const SpeechTranslator = () => {
   }, [recognition]);
 
   const startListening = () => {
-    if (!('webkitSpeechRecognition' in window)) {
+    if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
       setError('Speech recognition not supported in this browser.');
       return;
     }
 
-    const recognitionInstance = new webkitSpeechRecognition();
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognitionInstance = new SpeechRecognition();
     const speechLang = languages.find(lang => lang.name === speechLanguage);
     if (!speechLang) {
       setError('Selected speech language is not supported.');
@@ -41,10 +42,8 @@ const SpeechTranslator = () => {
     };
 
     recognitionInstance.onresult = (event) => {
-      if(!isListening){
-        const speechResult = event.results[0][0].transcript;
-        setTranslatedText(speechResult); 
-      }
+      const speechResult = event.results[0][0].transcript;
+      setTranslatedText(speechResult);
     };
 
     recognitionInstance.onerror = (event) => {
