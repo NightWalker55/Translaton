@@ -9,14 +9,15 @@ const SpeechTranslator = () => {
   const [error, setError] = useState('');
   const [speechLanguage, setSpeechLanguage] = useState("English (USA)");
   const [targetedLanguage, setTargetedLanguage] = useState("English (USA)");
+  const [recognition, setRecognition] = useState(null); // State to hold recognition instance
 
-  
   useEffect(() => {
-    // Trigger translation whenever targetedLanguage changes
-    if (translatedText && targetedLanguage !== speechLanguage) {
-      translateText(translatedText);
-    }
-  }, [targetedLanguage]);
+    return () => {
+      if (recognition) {
+        recognition.stop();
+      }
+    };
+  }, [recognition]);
 
   const startListening = () => {
     if (!('webkitSpeechRecognition' in window)) {
@@ -24,35 +25,45 @@ const SpeechTranslator = () => {
       return;
     }
 
-    const recognition = new webkitSpeechRecognition();
+    const recognitionInstance = new webkitSpeechRecognition();
     const speechLang = languages.find(lang => lang.name === speechLanguage);
     if (!speechLang) {
       setError('Selected speech language is not supported.');
       return;
     }
-    recognition.lang = speechLang.code;
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
+    recognitionInstance.lang = speechLang.code;
+    recognitionInstance.interimResults = false;
+    recognitionInstance.maxAlternatives = 1;
 
-    recognition.onstart = () => {
+    recognitionInstance.onstart = () => {
       setIsListening(true);
+      setTranslatedText('');
     };
 
-    recognition.onend = () => {
-      setIsListening(false);
+    recognitionInstance.onresult = (event) => {
+      if(!isListening){
+        const speechResult = event.results[0][0].transcript;
+        setTranslatedText(speechResult); 
+      }
     };
 
-    recognition.onresult = async (event) => {
-      const speechResult = event.results[0][0].transcript;
-      translateText(speechResult);
-    };
-
-    recognition.onerror = (event) => {
+    recognitionInstance.onerror = (event) => {
       setError(`Speech recognition error: ${event.error}`);
       setIsListening(false);
     };
 
-    recognition.start();
+    setRecognition(recognitionInstance);
+    recognitionInstance.start();
+  };
+
+  const stopListening = () => {
+    if (recognition) {
+      recognition.stop();
+      setIsListening(false);
+      if (translatedText.trim() !== '') {
+        translateText(translatedText);
+      }
+    }
   };
 
   const translateText = async (text) => {
@@ -62,7 +73,7 @@ const SpeechTranslator = () => {
         setError('Selected target language is not supported.');
         return;
       }
-
+      
       const response = await fetch('/api/translate', {
         method: 'POST',
         headers: {
@@ -108,7 +119,14 @@ const SpeechTranslator = () => {
         disabled={isListening}>
         {isListening ? 'Listening...' : 'Start Speaking'}
       </button>
-      {translatedText && (
+      <button
+        className='bg-red-700 text-white px-4 py-2 rounded-lg shadow-md 
+        hover:bg-red-800 transition duration-300 w-full max-w-xs mt-3'
+        onClick={stopListening}
+        disabled={!isListening}>
+        Stop Speaking
+      </button>
+      {translatedText && !isListening && (
         <div className="mt-6 w-full max-w-md p-4 bg-gray-100 rounded-lg shadow-md">
           <p className="text-lg font-semibold text-gray-800 mb-2">Translated text in {targetedLanguage}:</p>
           <p className="text-xl text-gray-900">{translatedText}</p>
