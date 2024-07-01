@@ -10,17 +10,23 @@ const cors = require('cors')
 const app = express();
 const port = 3002;
 
-// Configure middleware
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(
-    cors({
-      origin: 'https://translaton.vercel.app',
-      methods: ['POST'], 
-      allowedHeaders: ['Content-Type'], 
-    })
-  );
+const allowedOrigins = ['http://localhost:3000', 'https://translaton.vercel.app'];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['POST'], 
+  allowedHeaders: ['Content-Type'], 
+}));
 
 
 const upload = multer({ storage: multer.memoryStorage() });
