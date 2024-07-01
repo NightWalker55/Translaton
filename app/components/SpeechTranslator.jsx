@@ -79,7 +79,7 @@ const SpeechTranslator = () => {
     formData.append('languageCode', speechCode);
   
     try {
-      const response = await axios.post('https://translaton.vercel.app', formData, {
+      const response = await axios.post('https://translaton.vercel.app//recognize', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -98,19 +98,20 @@ const SpeechTranslator = () => {
     }
   };
   
-
   const translateText = async (text) => {
     try {
-      const targetLang = languages.find(lang => lang.name === targetedLanguage);
       const targetLang = languages.find(lang => lang.name === targetedLanguage);
       if (!targetLang) {
         setError('Selected target language is not supported.');
         return;
       }
-
-      const response = await axios.post('/api/translate', {
-        text,
-        target: targetLang.code,
+      
+      const response = await fetch('/api/translate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text, target: targetLang.code }),
       });
 
       const data = await response.json();
@@ -123,6 +124,8 @@ const SpeechTranslator = () => {
       setError('Translation error: ' + error.message);
     }
   };
+  
+
   return (
     <div className='flex flex-col justify-center items-center p-5 max-w-full'>
       <h3 className='my-3 text-2xl text-white text-center'>Choose the language you want to speak</h3>
