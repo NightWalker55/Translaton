@@ -90,6 +90,7 @@ const SpeechTranslator = () => {
       }
   
       const { transcription } = response.data;
+      console.log(transcription)
       translateText(transcription);
     } catch (err) {
       setError(`API request error: ${err.message}`);
