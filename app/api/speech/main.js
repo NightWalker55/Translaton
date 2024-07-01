@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(
     cors({
-      origin: 'http://localhost:3000',
+      origin: 'https://translaton.vercel.app',
       methods: ['POST'], 
       allowedHeaders: ['Content-Type'], 
     })
