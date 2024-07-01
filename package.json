@@ -6,16 +6,22 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "server": "nodemon app/api/speech/main.js"
   },
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.24.7",
     "@babel/runtime": "^7.24.7",
     "@google-cloud/speech": "^6.6.1",
     "@google-cloud/translate": "^8.3.0",
+    "axios": "^1.7.2",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "express": "^4.19.2",
     "fs": "^0.0.1-security",
+    "multer": "^1.4.5-lts.1",
     "next": "14.2.4",
+    "node-record-lpcm16": "^1.0.1",
     "react": "^18",
     "react-dom": "^18",
     "react-speech-recognition": "^3.10.0"
@@ -23,6 +29,7 @@
   "devDependencies": {
     "eslint": "^8",
     "eslint-config-next": "14.2.4",
+    "nodemon": "^3.1.4",
     "postcss": "^8",
     "tailwindcss": "^3.4.1"
   }

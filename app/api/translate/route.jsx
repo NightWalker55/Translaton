@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
 import { v2 as translateV2 } from '@google-cloud/translate';
-import path from 'path';
 import dotenv from 'dotenv';
 
-dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+dotenv.config();
 
 const keyFilePath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
 const credentials = JSON.parse(keyFilePath);
@@ -20,7 +19,6 @@ const translate = new translateV2.Translate({
 
 export async function POST(request) {
   const { text, target } = await request.json();
-
   try {
     const [translation] = await translate.translate(text, target);
     return NextResponse.json({ translatedText: translation });
