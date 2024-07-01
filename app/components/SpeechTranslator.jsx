@@ -105,7 +105,8 @@ const SpeechTranslator = () => {
         setError('Selected target language is not supported.');
         return;
       }
-      
+
+      console.log(text)
       const response = await fetch('/api/translate', {
         method: 'POST',
         headers: {
