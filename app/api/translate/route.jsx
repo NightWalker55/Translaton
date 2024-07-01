@@ -20,6 +20,8 @@ const translate = new translateV2.Translate({
 export async function POST(request) {
   const { text, target } = await request.json();
   try {
+    console.log('Received text:', text);
+    console.log('Target language:', target);
     const [translation] = await translate.translate(text, target);
     return NextResponse.json({ translatedText: translation });
   } catch (error) {
