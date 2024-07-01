@@ -100,27 +100,30 @@ const SpeechTranslator = () => {
 
   const translateText = async (text) => {
     try {
-      const targetLang = languages.find((lang) => lang.name === targetedLanguage);
+      const targetLang = languages.find(lang => lang.name === targetedLanguage);
       if (!targetLang) {
         setError('Selected target language is not supported.');
         return;
       }
-
-      const response = await axios.post('/api/translate', {
-        text,
-        target: targetLang.code,
+      
+      const response = await fetch('/api/translate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text, target: targetLang.code }),
       });
 
-      if (response.status !== 200) {
-        throw new Error('Failed to translate text.');
+      const data = await response.json();
+      if (data.error) {
+        setError(`Translation error: ${data.error}`);
+      } else {
+        setTranslatedText(data.translatedText);
       }
-      const { translatedText } = response.data;
-      setTranslatedText(translatedText);
     } catch (error) {
-      setError(`Translation error: ${error.message}`);
+      setError('Translation error: ' + error.message);
     }
   };
-
   return (
     <div className='flex flex-col justify-center items-center p-5 max-w-full'>
       <h3 className='my-3 text-2xl text-white text-center'>Choose the language you want to speak</h3>
