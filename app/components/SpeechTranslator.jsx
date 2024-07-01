@@ -79,7 +79,7 @@ const SpeechTranslator = () => {
     formData.append('languageCode', speechCode);
   
     try {
-      const response = await axios.post('hhttps://translaton.vercel.app', formData, {
+      const response = await axios.post('https://translaton.vercel.app', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
